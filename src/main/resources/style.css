@@ -1,0 +1,22 @@
+.card-container {
+    -fx-border-color: black;
+    -fx-border-width: 2px;
+    -fx-padding: 5px;
+    -fx-background-color: white;
+    -fx-alignment: center;
+}
+
+.card-image {
+    -fx-fit-width: 50px;
+    -fx-fit-height: 50px;
+}
+
+.card-box {
+    -fx-alignment: center;
+    -fx-spacing: 10px;
+}
+
+.layout {
+    -fx-padding: 20px;
+    -fx-alignment: center;
+}

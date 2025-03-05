@@ -1,7 +1,6 @@
 package org.example.card24game;
 
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -10,38 +9,39 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-import java.io.IOException;
 import java.util.Objects;
 import java.util.Random;
 
 public class HelloApplication extends Application {
 
     private HBox cardBox;
-    private final String[] suits = {"clubs", "diamonds", "hearts", "spades"}; // Possible suits
-
+    private final String[] suits = {"clubs", "diamonds", "hearts", "spades"};
 
     @Override
-    public void start(Stage stage) throws IOException {
+    public void start(Stage stage) {
         cardBox = new HBox(10);
-        cardBox.setStyle("-fx-alignment: center;");
+        cardBox.getStyleClass().add("card-box");
 
         generatecards();
 
-        VBox layout = new VBox(20,cardBox);
-        layout.setStyle("-fx-padding: 20px; -fx-alignment: center;");
 
-        stage.setScene(new Scene(layout,500,350));
+        VBox layout = new VBox(20, cardBox);
+        layout.getStyleClass().add("layout");
+
+        Scene scene = new Scene(layout, 1080, 720);
+        scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/style.css")).toExternalForm());
+
+        stage.setScene(scene);
         stage.setTitle("Card24Game");
         stage.show();
     }
-    private void generatecards()
-    {
+
+    private void generatecards() {
         Random random = new Random();
         cardBox.getChildren().clear();
 
-        for (int i =0; i <4; i++)
-        {
-            int cardValue = random.nextInt(13)+1;
+        for (int i = 0; i < 4; i++) {
+            int cardValue = random.nextInt(13) + 1;
             String suit = suits[random.nextInt(suits.length)];
 
             String cardName = switch (cardValue) {
@@ -51,20 +51,20 @@ public class HelloApplication extends Application {
                 case 13 -> "king";
                 default -> String.valueOf(cardValue);
             };
-            String imagePath = "/cards/" + cardName + "_of_" + suit + ".png";
 
+            String imagePath = "/cards/" + cardName + "_of_" + suit + ".png";
             Image cardImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream(imagePath)));
             ImageView cardView = new ImageView(cardImage);
-            cardView.setFitWidth(80);
-            cardView.setFitHeight(120);
 
+            // Create a StackPane to wrap the image and apply CSS class for styling
             StackPane cardContainer = new StackPane(cardView);
-            cardContainer.setStyle("-fx-border-color: black; -fx-border-width: 2px;-fx-padding: 5px");
+            cardContainer.getStyleClass().add("card-container"); // Apply 'card-container' class
+
             cardBox.getChildren().add(cardContainer);
         }
     }
+
     public static void main(String[] args) {
         launch();
     }
 }
-
