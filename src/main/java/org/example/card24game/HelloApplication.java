@@ -56,7 +56,6 @@ public class HelloApplication extends Application {
             ImageView cardView = new ImageView(cardImage);
             cardView.setFitWidth(80);
             cardView.setFitHeight(120);
-
             cardBox.getChildren().add(cardView);
         }
     }
