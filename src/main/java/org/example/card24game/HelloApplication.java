@@ -6,6 +6,7 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -29,7 +30,7 @@ public class HelloApplication extends Application {
         VBox layout = new VBox(20,cardBox);
         layout.setStyle("-fx-padding: 20px; -fx-alignment: center;");
 
-        stage.setScene(new Scene(layout,400,200));
+        stage.setScene(new Scene(layout,500,350));
         stage.setTitle("Card24Game");
         stage.show();
     }
@@ -56,7 +57,10 @@ public class HelloApplication extends Application {
             ImageView cardView = new ImageView(cardImage);
             cardView.setFitWidth(80);
             cardView.setFitHeight(120);
-            cardBox.getChildren().add(cardView);
+
+            StackPane cardContainer = new StackPane(cardView);
+            cardContainer.setStyle("-fx-border-color: black; -fx-border-width: 2px;-fx-padding: 5px");
+            cardBox.getChildren().add(cardContainer);
         }
     }
     public static void main(String[] args) {
