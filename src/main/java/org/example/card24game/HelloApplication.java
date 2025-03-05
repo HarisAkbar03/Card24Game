@@ -2,6 +2,8 @@ package org.example.card24game;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
@@ -16,16 +18,22 @@ public class HelloApplication extends Application {
 
     private HBox cardBox;
     private final String[] suits = {"clubs", "diamonds", "hearts", "spades"};
+    private int[] cardValues = new int[4];
 
     @Override
     public void start(Stage stage) {
         cardBox = new HBox(10);
         cardBox.getStyleClass().add("card-box");
 
-        generatecards();
+        TextField equationField = new TextField();
+        equationField.setPromptText("Enter an equation");
+
+        Button verifyButton = new Button("Verify");
+        verifyButton.setOnAction(e->validateEquation(equationField.getText()));
+        generateCards();
 
 
-        VBox layout = new VBox(20, cardBox);
+        VBox layout = new VBox(20, cardBox,equationField,verifyButton);
         layout.getStyleClass().add("layout");
 
         Scene scene = new Scene(layout, 1080, 720);
@@ -36,7 +44,7 @@ public class HelloApplication extends Application {
         stage.show();
     }
 
-    private void generatecards() {
+    private void generateCards() {
         Random random = new Random();
         cardBox.getChildren().clear();
 
@@ -63,7 +71,15 @@ public class HelloApplication extends Application {
             cardBox.getChildren().add(cardContainer);
         }
     }
+    private void validateEquation(String equation)
+    {
+        String[] cardStrings = new String[cardValues.length];
+        for (int i =0; i <cardValues.length; i++)
+        {
+            cardStrings[i] = String.valueOf(cardValues[i]);
+        }
 
+    }
     public static void main(String[] args) {
         launch();
     }
