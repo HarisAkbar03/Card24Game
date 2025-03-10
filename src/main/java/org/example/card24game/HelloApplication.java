@@ -12,8 +12,9 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-import java.util.Objects;
-import java.util.Random;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class HelloApplication extends Application {
 
@@ -30,11 +31,14 @@ public class HelloApplication extends Application {
         equationField.setPromptText("Enter an equation");
 
         Button verifyButton = new Button("Verify");
-        verifyButton.setOnAction(e->validateEquation(equationField.getText()));
+        verifyButton.setOnAction(e -> validateEquation(equationField.getText()));
+
+        Button refreshButton = new Button("Refresh");
+        refreshButton.setOnAction(e -> generateCards());
+
         generateCards();
 
-
-        VBox layout = new VBox(20, cardBox,equationField,verifyButton);
+        VBox layout = new VBox(20, cardBox, equationField, verifyButton, refreshButton);
         layout.getStyleClass().add("layout");
 
         Scene scene = new Scene(layout, 1080, 720);
@@ -51,6 +55,7 @@ public class HelloApplication extends Application {
 
         for (int i = 0; i < 4; i++) {
             int cardValue = random.nextInt(13) + 1;
+            cardValues[i] = cardValue;
             String suit = suits[random.nextInt(suits.length)];
 
             String cardName = switch (cardValue) {
@@ -65,36 +70,33 @@ public class HelloApplication extends Application {
             Image cardImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream(imagePath)));
             ImageView cardView = new ImageView(cardImage);
 
-            // Create a StackPane to wrap the image and apply CSS class for styling
             StackPane cardContainer = new StackPane(cardView);
-            cardContainer.getStyleClass().add("card-container"); // Apply 'card-container' class
+            cardContainer.getStyleClass().add("card-container");
 
             cardBox.getChildren().add(cardContainer);
         }
     }
     private void validateEquation(String equation) {
-        // Extract the card values and create a string for validation
-        String[] cardStrings = new String[cardValues.length];
-        for (int i = 0; i < cardValues.length; i++) {
-            cardStrings[i] = String.valueOf(cardValues[i]);
+        List<Integer> usedNumbers = new ArrayList<>();
+        Pattern pattern = Pattern.compile("\\d+");
+        Matcher matcher = pattern.matcher(equation);
+
+        while (matcher.find()) {
+            usedNumbers.add(Integer.parseInt(matcher.group()));
         }
 
-        // Create a regular expression to check if the equation contains only valid numbers and operators
-        String cardValuesString = String.join("|", cardStrings); // "3|5|6|10"
-        String validEquationPattern = "^[\\d+" + cardValuesString + "*/()]+$";
+        Collections.sort(usedNumbers);
+        int[] sortedCardValues = Arrays.copyOf(cardValues, cardValues.length);
+        Arrays.sort(sortedCardValues);
 
-        // Check if the equation contains only the displayed card values and arithmetic symbols
-        if (!equation.matches(validEquationPattern)) {
-            showAlert("Invalid Equation", "The equation must use only the values of the displayed cards.");
+        if (!areCardValuesValid(usedNumbers, sortedCardValues)) {
+            showAlert("Invalid Equation", "You must use all four card values exactly once.");
             return;
         }
 
         try {
-            // Evaluate the equation using JavaScript engine (this is just for simplicity, it's insecure for real-world use)
-            String evalEquation = equation.replace("×", "*").replace("÷", "/"); // Replace common symbols
-            double result = evaluateExpression(evalEquation);
+            double result = evaluateExpression(equation);
 
-            // Check if the result is 24
             if (result == 24) {
                 showAlert("Success!", "The equation is valid and evaluates to 24!");
             } else {
@@ -105,16 +107,94 @@ public class HelloApplication extends Application {
         }
     }
 
-    // Use JavaScript engine to evaluate the mathematical expression
+    private boolean areCardValuesValid(List<Integer> usedNumbers, int[] sortedCardValues) {
+
+        Collections.sort(usedNumbers);
+
+        return usedNumbers.equals(Arrays.asList(Arrays.stream(sortedCardValues).boxed().toArray(Integer[]::new)));
+    }
+
     private double evaluateExpression(String expression) {
         try {
-            javax.script.ScriptEngine engine = new javax.script.ScriptEngineManager().getEngineByName("JavaScript");
-            return Double.parseDouble(engine.eval(expression).toString());
+
+            expression = expression.replaceAll("\\s+", "");
+
+            if (!expression.matches("[0-9+\\-*/().]*")) {
+                throw new IllegalArgumentException("Invalid characters in expression");
+            }
+
+            return evaluateBasicExpression(expression);
+
         } catch (Exception e) {
+            System.out.println("Error evaluating expression: " + expression);
             return Double.NaN;
         }
     }
 
+    private double evaluateBasicExpression(String expression) {
+
+        Stack<Double> values = new Stack<>();
+
+        Stack<Character> operators = new Stack<>();
+
+        for (int i = 0; i < expression.length(); i++) {
+            char current = expression.charAt(i);
+
+            if (Character.isDigit(current)) {
+                StringBuilder num = new StringBuilder();
+                while (i < expression.length() && Character.isDigit(expression.charAt(i))) {
+                    num.append(expression.charAt(i));
+                    i++;
+                }
+                values.push(Double.parseDouble(num.toString()));
+                i--;
+            }
+
+            else if (current == '(') {
+                operators.push(current);
+            }
+
+            else if (current == ')') {
+                while (!operators.isEmpty() && operators.peek() != '(') {
+                    values.push(applyOperator(operators.pop(), values.pop(), values.pop()));
+                }
+                operators.pop();
+            }
+
+            else if (current == '+' || current == '-' || current == '*' || current == '/') {
+                while (!operators.isEmpty() && precedence(current) <= precedence(operators.peek())) {
+                    values.push(applyOperator(operators.pop(), values.pop(), values.pop()));
+                }
+                operators.push(current);
+            }
+        }
+
+        while (!operators.isEmpty()) {
+            values.push(applyOperator(operators.pop(), values.pop(), values.pop()));
+        }
+
+        return values.pop();
+    }
+
+    private double applyOperator(char operator, double b, double a) {
+        switch (operator) {
+            case '+': return a + b;
+            case '-': return a - b;
+            case '*': return a * b;
+            case '/': return a / b;
+            default: throw new UnsupportedOperationException("Operator not supported");
+        }
+    }
+
+    private int precedence(char operator) {
+        switch (operator) {
+            case '+':
+            case '-': return 1;
+            case '*':
+            case '/': return 2;
+            default: return -1;
+        }
+    }
     private void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
