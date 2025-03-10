@@ -218,23 +218,36 @@ public class HelloApplication extends Application {
             }
         }
     }
-
     private String findBruteForceSolution(int[] cardValues) {
         List<String> operators = Arrays.asList("+", "-", "*", "/");
         List<String> allPermutations = getPermutations(cardValues);
 
+        // Try all permutations of the cards and apply all possible combinations of operators and parentheses
         for (String perm : allPermutations) {
             for (String op1 : operators) {
                 for (String op2 : operators) {
                     for (String op3 : operators) {
-                        String expression = perm + " " + op1 + " " + "???" + " " + op2 + " " + "???" + " " + op3;
-                        try {
-                            double result = evaluateExpression(expression);
-                            if (result == 24) {
-                                return expression + " = 24";
-                            }
-                        } catch (Exception e) {
+                        // Generate all parenthetical combinations to handle operator precedence
+                        String[] cards = perm.split(" ");
 
+                        // Try each possible arrangement of parentheses
+                        String[] expressions = {
+                                cards[0] + " " + op1 + " " + cards[1] + " " + op2 + " " + cards[2] + " " + op3 + " " + cards[3],  // ((a op b) op c) op d
+                                "(" + cards[0] + " " + op1 + " " + cards[1] + ") " + op2 + " (" + cards[2] + " " + op3 + " " + cards[3] + ")",  // (a op b) op (c op d)
+                                "(" + cards[0] + " " + op1 + " (" + cards[1] + " " + op2 + " " + cards[2] + ")) " + op3 + " " + cards[3],  // (a op (b op c)) op d
+                                cards[0] + " " + op1 + " (" + cards[1] + " " + op2 + " (" + cards[2] + " " + op3 + " " + cards[3] + "))",  // a op (b op (c op d))
+                                "(" + cards[0] + " " + op1 + " " + cards[1] + " " + op2 + " " + cards[2] + ") " + op3 + " " + cards[3]   // (a op b op c) op d
+                        };
+
+                        for (String expression : expressions) {
+                            try {
+                                double result = evaluateExpression(expression);
+                                if (result == 24) {
+                                    return expression + " = 24";
+                                }
+                            } catch (Exception e) {
+                                // Catch any exceptions and continue with other combinations
+                            }
                         }
                     }
                 }
@@ -245,18 +258,39 @@ public class HelloApplication extends Application {
     }
 
     private List<String> getPermutations(int[] cardValues) {
-
         List<String> permutations = new ArrayList<>();
-        for (int i = 0; i < cardValues.length; i++) {
-            for (int j = 0; j < cardValues.length; j++) {
-                if (i != j) {
-                    permutations.add(cardValues[i] + " " + cardValues[j]);
-                }
-            }
-        }
+        // Get all permutations of the 4 cards
+        permute(cardValues, 0, permutations);
         return permutations;
     }
 
+    private void permute(int[] cardValues, int index, List<String> permutations) {
+        if (index == cardValues.length - 1) {
+            // Add the current permutation to the list
+            StringBuilder perm = new StringBuilder();
+            for (int i = 0; i < cardValues.length; i++) {
+                perm.append(cardValues[i]);
+                if (i < cardValues.length - 1) {
+                    perm.append(" ");
+                }
+            }
+            permutations.add(perm.toString());
+        } else {
+            for (int i = index; i < cardValues.length; i++) {
+                // Swap the elements
+                swap(cardValues, index, i);
+                permute(cardValues, index + 1, permutations);
+                // Swap back
+                swap(cardValues, index, i);
+            }
+        }
+    }
+
+    private void swap(int[] cardValues, int i, int j) {
+        int temp = cardValues[i];
+        cardValues[i] = cardValues[j];
+        cardValues[j] = temp;
+    }
     private void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
