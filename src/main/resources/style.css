@@ -19,4 +19,31 @@
 .layout {
     -fx-padding: 20px;
     -fx-alignment: center;
+    -fx-spacing: 20px;
+}
+
+.button {
+    -fx-min-width: 100px;
+    -fx-min-height: 50px;
+    -fx-font-size: 14px;
+}
+
+.button-layout {
+    -fx-alignment: center;
+    -fx-spacing: 20px;
+}
+
+.action-layout {
+    -fx-alignment: center;
+    -fx-spacing: 10px;
+}
+
+.text-field {
+    -fx-max-width: 200px;
+}
+
+#solutionField {
+    -fx-min-width: 250px;
+    -fx-font-size: 14px;
+    -fx-padding: 5px;
 }

@@ -12,6 +12,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -29,16 +30,34 @@ public class HelloApplication extends Application {
 
         TextField equationField = new TextField();
         equationField.setPromptText("Enter an equation");
+        equationField.getStyleClass().add("text-field");
+
+        TextField solutionField = new TextField();
+        solutionField.setPromptText("AI Solution");
+        solutionField.setEditable(false);
+        solutionField.setId("solutionField");
 
         Button verifyButton = new Button("Verify");
+        verifyButton.getStyleClass().add("button");
         verifyButton.setOnAction(e -> validateEquation(equationField.getText()));
 
         Button refreshButton = new Button("Refresh");
+        refreshButton.getStyleClass().add("button");
         refreshButton.setOnAction(e -> generateCards());
+
+        Button findSolutionButton = new Button("Find Solution");
+        findSolutionButton.getStyleClass().add("button");
+        findSolutionButton.setOnAction(e -> generateHint(solutionField));
 
         generateCards();
 
-        VBox layout = new VBox(20, cardBox, equationField, verifyButton, refreshButton);
+        VBox topLayout = new VBox(20, findSolutionButton, solutionField);
+        topLayout.getStyleClass().add("button-layout");
+
+        HBox buttonLayout = new HBox(10, verifyButton, refreshButton);
+        buttonLayout.getStyleClass().add("action-layout");
+
+        VBox layout = new VBox(20, topLayout, cardBox, equationField, buttonLayout);
         layout.getStyleClass().add("layout");
 
         Scene scene = new Scene(layout, 1080, 720);
@@ -76,6 +95,7 @@ public class HelloApplication extends Application {
             cardBox.getChildren().add(cardContainer);
         }
     }
+
     private void validateEquation(String equation) {
         List<Integer> usedNumbers = new ArrayList<>();
         Pattern pattern = Pattern.compile("\\d+");
@@ -108,23 +128,17 @@ public class HelloApplication extends Application {
     }
 
     private boolean areCardValuesValid(List<Integer> usedNumbers, int[] sortedCardValues) {
-
         Collections.sort(usedNumbers);
-
         return usedNumbers.equals(Arrays.asList(Arrays.stream(sortedCardValues).boxed().toArray(Integer[]::new)));
     }
 
     private double evaluateExpression(String expression) {
         try {
-
             expression = expression.replaceAll("\\s+", "");
-
             if (!expression.matches("[0-9+\\-*/().]*")) {
                 throw new IllegalArgumentException("Invalid characters in expression");
             }
-
             return evaluateBasicExpression(expression);
-
         } catch (Exception e) {
             System.out.println("Error evaluating expression: " + expression);
             return Double.NaN;
@@ -132,9 +146,7 @@ public class HelloApplication extends Application {
     }
 
     private double evaluateBasicExpression(String expression) {
-
         Stack<Double> values = new Stack<>();
-
         Stack<Character> operators = new Stack<>();
 
         for (int i = 0; i < expression.length(); i++) {
@@ -148,20 +160,14 @@ public class HelloApplication extends Application {
                 }
                 values.push(Double.parseDouble(num.toString()));
                 i--;
-            }
-
-            else if (current == '(') {
+            } else if (current == '(') {
                 operators.push(current);
-            }
-
-            else if (current == ')') {
+            } else if (current == ')') {
                 while (!operators.isEmpty() && operators.peek() != '(') {
                     values.push(applyOperator(operators.pop(), values.pop(), values.pop()));
                 }
                 operators.pop();
-            }
-
-            else if (current == '+' || current == '-' || current == '*' || current == '/') {
+            } else if (current == '+' || current == '-' || current == '*' || current == '/') {
                 while (!operators.isEmpty() && precedence(current) <= precedence(operators.peek())) {
                     values.push(applyOperator(operators.pop(), values.pop(), values.pop()));
                 }
@@ -195,6 +201,18 @@ public class HelloApplication extends Application {
             default: return -1;
         }
     }
+
+    private void generateHint(TextField solutionField) {
+
+        try {
+            String hint = OpenAIClient.getSolutionFromOpenAI(cardValues);
+            solutionField.setText(hint);
+        } catch (IOException e) {
+            solutionField.setText("Error: Unable to fetch solution.");
+            e.printStackTrace();
+        }
+    }
+
     private void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
