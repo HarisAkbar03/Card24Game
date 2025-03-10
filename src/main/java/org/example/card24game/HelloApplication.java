@@ -203,14 +203,58 @@ public class HelloApplication extends Application {
     }
 
     private void generateHint(TextField solutionField) {
-
         try {
             String hint = OpenAIClient.getSolutionFromOpenAI(cardValues);
             solutionField.setText(hint);
         } catch (IOException e) {
-            solutionField.setText("Error: Unable to fetch solution.");
+            solutionField.setText("Error: Unable to fetch solution. Attempting brute force...");
             e.printStackTrace();
+
+            String bruteForceSolution = findBruteForceSolution(cardValues);
+            if (bruteForceSolution != null) {
+                solutionField.setText(bruteForceSolution);
+            } else {
+                solutionField.setText("No valid solution found.");
+            }
         }
+    }
+
+    private String findBruteForceSolution(int[] cardValues) {
+        List<String> operators = Arrays.asList("+", "-", "*", "/");
+        List<String> allPermutations = getPermutations(cardValues);
+
+        for (String perm : allPermutations) {
+            for (String op1 : operators) {
+                for (String op2 : operators) {
+                    for (String op3 : operators) {
+                        String expression = perm + " " + op1 + " " + "???" + " " + op2 + " " + "???" + " " + op3;
+                        try {
+                            double result = evaluateExpression(expression);
+                            if (result == 24) {
+                                return expression + " = 24";
+                            }
+                        } catch (Exception e) {
+
+                        }
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
+
+    private List<String> getPermutations(int[] cardValues) {
+
+        List<String> permutations = new ArrayList<>();
+        for (int i = 0; i < cardValues.length; i++) {
+            for (int j = 0; j < cardValues.length; j++) {
+                if (i != j) {
+                    permutations.add(cardValues[i] + " " + cardValues[j]);
+                }
+            }
+        }
+        return permutations;
     }
 
     private void showAlert(String title, String message) {
