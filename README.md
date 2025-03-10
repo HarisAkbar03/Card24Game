@@ -19,7 +19,7 @@ Setup
 Clone the repository
 Clone the repository to your local machine:
 
-git clone https://github.com/your-username/Card24Game.git
+git clone https://github.com/HarisAkbar03/Card24Game.git
 Import the project
 Import the project into your IDE (e.g., IntelliJ IDEA, Eclipse) as a Maven project.
 Ensure that Java 18 or higher is set as the project SDK.
