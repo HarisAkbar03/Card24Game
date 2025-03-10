@@ -2,6 +2,7 @@ package org.example.card24game;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
@@ -71,15 +72,57 @@ public class HelloApplication extends Application {
             cardBox.getChildren().add(cardContainer);
         }
     }
-    private void validateEquation(String equation)
-    {
+    private void validateEquation(String equation) {
+        // Extract the card values and create a string for validation
         String[] cardStrings = new String[cardValues.length];
-        for (int i =0; i <cardValues.length; i++)
-        {
+        for (int i = 0; i < cardValues.length; i++) {
             cardStrings[i] = String.valueOf(cardValues[i]);
         }
 
+        // Create a regular expression to check if the equation contains only valid numbers and operators
+        String cardValuesString = String.join("|", cardStrings); // "3|5|6|10"
+        String validEquationPattern = "^[\\d+" + cardValuesString + "*/()]+$";
+
+        // Check if the equation contains only the displayed card values and arithmetic symbols
+        if (!equation.matches(validEquationPattern)) {
+            showAlert("Invalid Equation", "The equation must use only the values of the displayed cards.");
+            return;
+        }
+
+        try {
+            // Evaluate the equation using JavaScript engine (this is just for simplicity, it's insecure for real-world use)
+            String evalEquation = equation.replace("×", "*").replace("÷", "/"); // Replace common symbols
+            double result = evaluateExpression(evalEquation);
+
+            // Check if the result is 24
+            if (result == 24) {
+                showAlert("Success!", "The equation is valid and evaluates to 24!");
+            } else {
+                showAlert("Invalid Equation", "The equation does not evaluate to 24. Try again!");
+            }
+        } catch (Exception e) {
+            showAlert("Invalid Equation", "There was an error evaluating the equation.");
+        }
     }
+
+    // Use JavaScript engine to evaluate the mathematical expression
+    private double evaluateExpression(String expression) {
+        try {
+            javax.script.ScriptEngine engine = new javax.script.ScriptEngineManager().getEngineByName("JavaScript");
+            return Double.parseDouble(engine.eval(expression).toString());
+        } catch (Exception e) {
+            return Double.NaN;
+        }
+    }
+
+    private void showAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+
     public static void main(String[] args) {
         launch();
     }
