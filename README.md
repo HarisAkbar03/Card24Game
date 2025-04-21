@@ -1,83 +1,158 @@
-Card 24 Game
-This is a Card 24 Game built with JavaFX, where players are given four cards and must use arithmetic operations to reach the result of 24. The game allows players to input mathematical expressions, and the app verifies if the expression is valid and evaluates to 24. Additionally, the app includes a brute force solver that attempts to find a solution by evaluating all possible combinations of card values and operations.
 
-Features
-Card Generation: Randomly generates four cards from a deck of standard cards.
-Equation Input: Players can input an equation using the card values and basic arithmetic operations (+, -, *, /).
-Equation Validation: Verifies if the input equation is valid and if it evaluates to 24.
-Brute Force Solver: Attempts to find a valid solution by evaluating all possible combinations of the cards and arithmetic operations.
-Hint Generator: Uses OpenAI's API to provide hints for solving the equation (requires an OpenAI API key).
-Card Display: Displays card images dynamically based on randomly selected cards.
-Prerequisites
-To run the project, ensure you have the following installed:
+# **Card 24 Game 🃏🎮**
 
-Java 18 or higher
-JavaFX (included in the project dependencies)
-Maven (for dependency management and build)
-OpenAI API Key (if you want to use the hint generator)
-Setup
-Clone the repository
-Clone the repository to your local machine:
+Welcome to the **Card 24 Game**! This fun puzzle game challenges players to use arithmetic operations to reach the target number **24** using four randomly drawn cards from a standard deck.
 
-git clone https://github.com/HarisAkbar03/Card24Game.git
-Import the project
-Import the project into your IDE (e.g., IntelliJ IDEA, Eclipse) as a Maven project.
-Ensure that Java 18 or higher is set as the project SDK.
-Set up OpenAI API Key (Optional)
-If you want to use the hint generation feature:
+The game includes several exciting features like equation validation, a brute force solver, and an optional **Hint Generator** powered by **OpenAI's API**.
 
-Sign up for OpenAI API access here.
-Get your API key.
-Add your API key in the OpenAIClient class to use the hint generation functionality.
-Build and Run the Project
-Build the project using Maven:
+----------
 
-mvn clean install
-Run the application:
+## 🌟 **Features**
 
-In your IDE, run the HelloApplication class.
-Alternatively, run from the command line:
+-   **Card Generation**: Randomly selects four cards from a standard deck.
+    
+-   **Equation Input**: Players input equations using card values and basic arithmetic operations (`+`, `-`, `*`, `/`).
+    
+-   **Equation Validation**: Verifies if the entered equation is valid and if it evaluates to 24.
+    
+-   **Brute Force Solver**: Attempts to find a valid solution by evaluating all possible combinations of cards and arithmetic operations.
+    
+-   **Hint Generator**: Uses OpenAI's API to provide hints for solving the equation (**API key required**).
+    
+-   **Card Display**: Dynamically displays card images based on the randomly selected cards.
+    
 
-mvn javafx:run
-The application will open a window displaying four random cards and a text field where you can enter an equation. The app will evaluate the expression to check if it equals 24.
+----------
 
-Project Structure
-src/main/java/org/example/card24game/: Contains the main Java classes of the application.
-HelloApplication.java: The main class that sets up the JavaFX interface and handles card generation, equation validation, and brute force solution.
-OpenAIClient.java: (Optional) Handles interaction with OpenAI's API to generate hints for solving the equation.
-src/main/resources/: Contains the resources for the project.
-/cards/: Contains card image files (e.g., 2_of_clubs.png, king_of_spades.png).
-style.css: Custom stylesheet for the JavaFX UI layout and design.
-pom.xml: Maven configuration file for dependency management.
-Usage
-The application will display four randomly selected cards from the deck.
-You can input an arithmetic equation using the values from the four cards in the text field.
-Click "Verify" to check if the equation is valid and evaluates to 24.
-You can click "Refresh" to generate a new set of cards.
-Click "Find Solution" to get a hint or see the brute force solution if OpenAI's API is unavailable.
-Example Usage
-Generate the cards:
+## 🛠️ **Prerequisites**
 
-You will see cards such as "3 of hearts", "jack of spades", etc.
-Enter an equation like:
+To run this project, make sure you have the following installed:
 
-3 + 5 * (2 - 1)
-Click "Verify" to check if the equation evaluates to 24. If the equation is valid and evaluates to 24, you will receive a success message.
+-   **Java 18** or higher
+    
+-   **JavaFX** (included in the project dependencies)
+    
+-   **Maven** (for dependency management and building the project)
+    
+-   **OpenAI API Key** (for hint generation)
+    
 
-If the equation doesn't evaluate to 24, you can try another or click "Find Solution" to get a hint or brute force solution.
+----------
 
-Contributing
-Feel free to fork this repository and create pull requests if you want to contribute to the project. Please follow these steps:
+## 🚀 **Setup Instructions**
 
-Fork the repository.
-Create a new branch (git checkout -b feature/your-feature).
-Commit your changes (git commit -am 'Add new feature').
-Push to the branch (git push origin feature/your-feature).
-Create a new pull request.
+### 1. **Clone the Repository**
+    
+  Clone the project to your local machine using Git:
+  
+    git clone https://github.com/HarisAkbar03/Card24Game.git` 
 
+### 2. **Import the Project**
 
+Import the project into your IDE (e.g., IntelliJ IDEA, Eclipse) as a **Maven** project.  
+Ensure that **Java 18** or higher is set as the project SDK.
 
+### 3. **Set Up OpenAI API Key (Optional)**
 
+If you want to use the **Hint Generator** feature:
 
+1.  Sign up for **OpenAI API** access [here](https://beta.openai.com/signup/).
+    
+2.  Obtain your **API Key**.
+    
+3.  Add the API key in the `OpenAIClient.java` class to enable the hint generation functionality.
+    
 
+### 4. **Build and Run the Project**
 
+-   **Build the project** using Maven:
+    `mvn clean install` 
+    
+-   **Run the application**:
+    
+    -   In your IDE, run the `HelloApplication.java` class.
+        
+    -   Alternatively, run from the command line:
+        
+    `mvn javafx:run` 
+    
+
+Once the application is running, a window will open displaying four random cards. You can then input an arithmetic equation and verify if it evaluates to **24**!
+
+----------
+
+## 🗂️ **Project Structure**
+
+Here’s a brief overview of the project structure:
+
+-   **`src/main/java/org/example/card24game/`**: Contains the main Java classes of the application.
+    
+    -   `HelloApplication.java`: The main class that sets up the JavaFX interface, handles card generation, equation validation, and brute force solution.
+        
+    -   `OpenAIClient.java`: (Optional) Handles interaction with OpenAI's API for generating hints.
+        
+-   **`src/main/resources/`**: Contains the resources for the project.
+    
+    -   **`/cards/`**: Contains the card image files (e.g., `2_of_clubs.png`, `king_of_spades.png`).
+        
+    -   `style.css`: Custom stylesheet for the JavaFX UI layout and design.
+        
+-   **`pom.xml`**: Maven configuration file for managing dependencies.
+    
+
+----------
+
+## 🎮 **Usage**
+
+1.  **Generate Cards**: Upon starting the application, four random cards will be displayed.
+    
+2.  **Enter an Equation**: Use the values from the four cards to create an arithmetic equation in the text field.
+    
+    -   Example: `3 + 5 * (2 - 1)`
+        
+3.  **Verify the Equation**: Click "Verify" to check if your equation evaluates to **24**. If valid, a success message will appear.
+    
+4.  **Refresh**: Click "Refresh" to generate a new set of cards.
+    
+5.  **Find Solution**: If your equation doesn't work, click "Find Solution" to either get a hint or see the brute force solution (if OpenAI API is unavailable).
+    
+
+----------
+
+## 💡 **Example Usage**
+
+-   **Generated Cards**:
+    
+    -   "3 of hearts", "jack of spades", "2 of diamonds", "king of clubs"
+        
+-   **Input Equation**:
+    
+    -   `3 + 5 * (2 - 1)`
+        
+-   **Click "Verify"**:
+    
+    -   If the equation evaluates to **24**, you'll see a success message. If not, try another equation or click **Find Solution** to get help.
+        
+
+----------
+
+## 💬 **Contributing**
+
+We welcome contributions! If you'd like to improve or add to this project, follow these steps:
+
+1.  **Fork** the repository.
+    
+2.  **Create a new branch** for your feature:
+    
+    `git checkout -b feature/your-feature` 
+    
+3.  **Commit** your changes:
+   \
+    
+    `git commit -am 'Add new feature'` 
+    
+4.  **Push** to your branch:
+
+    `git push origin feature/your-feature` 
+    
+5.  **Create a pull request** to merge your changes.
